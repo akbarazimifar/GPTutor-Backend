@@ -43,8 +43,8 @@ public class ChatGptController {
         return new SSEString().streamString(conversation.message);
     }
 
-    @GetMapping("/api-keys-index")
-    public Integer checkCache() {
-        return this.apiKeysService.getKeyIndex();
+    @GetMapping("/api-key")
+    public String checkCache() {
+        return this.apiKeysService.getKey();
     }
 }

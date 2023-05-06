@@ -1,30 +1,42 @@
 package com.example.chatgpt.services;
 
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.*;
 
 
-public class ApiKeysService {
-    private final HashMap<Integer, Integer> apiKeysMap = new HashMap();
 
-    public ApiKeysService() {
-        scheduleReset();
-        reset();
+public class ApiKeysService  implements InitializingBean {
+    final int ATTEMPTS = 3;
+
+    @Value("${api.keys}")
+    private String apiKeys;
+    private HashMap<String, Integer> apiKeysMap = new HashMap<>();
+
+
+    public void afterPropertiesSet() throws Exception
+    {
+      setupApiKeysMap();
+      scheduleReset();
     }
 
-    void reset() {
-        apiKeysMap.put(0, 3);
-        apiKeysMap.put(1, 3);
+    void setupApiKeysMap() {
+        final List<String> splitApiKeys = Arrays.asList(this.apiKeys.split(","));
+        final HashMap<String, Integer> hashMap = new HashMap<>();
+
+        splitApiKeys.forEach((item) -> hashMap.put(item, ATTEMPTS));
+
+        this.apiKeysMap = hashMap;
     }
 
     private void scheduleReset() {
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() { public void run() { reset(); } }, 0, 60 * 1000);
+        timer.schedule(new TimerTask() { public void run() { setupApiKeysMap(); } }, 0, 60 * 1000);
     }
 
-    public Integer getKeyIndex() {
-        for (HashMap.Entry<Integer, Integer> item : apiKeysMap.entrySet()) {
+    public String getKey() {
+        for (HashMap.Entry<String, Integer> item : apiKeysMap.entrySet()) {
             if (item.getValue() != 0) {
                 apiKeysMap.replace(item.getKey(), item.getValue() - 1);
                 System.out.println(apiKeysMap);

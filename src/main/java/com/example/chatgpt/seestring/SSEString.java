@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 public class SSEString {
     public SseEmitter streamString(String str) {
         final String[] slittedString = splitString(str);
-        System.out.println(Arrays.toString(slittedString));
 
         SseEmitter emitter = new SseEmitter();
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -17,7 +16,6 @@ public class SSEString {
         executor.execute(() -> {
             try {
                 for (int index = 0; index < slittedString.length; index++) {
-                    System.out.println(slittedString[index]);
                     SseEmitter.SseEventBuilder event = SseEmitter.event()
                             .data(slittedString[index])
                             .id(String.valueOf(index));

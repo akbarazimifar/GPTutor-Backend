@@ -39,7 +39,6 @@ public class ApiKeysService  implements InitializingBean {
         for (HashMap.Entry<String, Integer> item : apiKeysMap.entrySet()) {
             if (item.getValue() != 0) {
                 apiKeysMap.replace(item.getKey(), item.getValue() - 1);
-                System.out.println(apiKeysMap);
                 return item.getKey();
             }
         }

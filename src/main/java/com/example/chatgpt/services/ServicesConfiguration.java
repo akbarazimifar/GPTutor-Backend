@@ -10,11 +10,14 @@ public class ServicesConfiguration {
 
     @Bean
     ApiKeysService apiKeysService() {
-        return new ApiKeysService();
+        return new ApiKeysService(aesCipher());
     }
 
     @Bean ConversationsService conversationsService() {
         return  new ConversationsService();
     }
 
+    @Bean AESCipher aesCipher() {
+        return new AESCipher();
+    }
 }

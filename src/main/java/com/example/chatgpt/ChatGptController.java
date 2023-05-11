@@ -44,7 +44,7 @@ public class ChatGptController {
     }
 
     @GetMapping("/api-key")
-    public String checkCache() {
+    public String checkCache() throws Exception {
         return this.apiKeysService.getKey();
     }
 }

@@ -1,24 +1,55 @@
 package com.example.chatgpt.services;
 
-import com.example.chatgpt.entity.Conversation;
-import com.example.chatgpt.lrucache.LRUCache;
+import com.example.chatgpt.entity.ChatGptRequest;
+import com.example.chatgpt.entity.ConversationRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+
 
 public class ConversationsService {
-    private final LRUCache<String, String> lruCache = new LRUCache<String, String>(200);
+    public SseEmitter getConversation(ConversationRequest conversationRequest, String key) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
 
-    public boolean hasConversation(String name) {
-        return lruCache.get(name).isPresent();
+        ChatGptRequest chatGptRequest = new ChatGptRequest(conversationRequest.getModel(), conversationRequest.getMessages(), true);
+        String input = mapper.writeValueAsString(chatGptRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + key)
+                .POST(HttpRequest.BodyPublishers.ofString(input))
+                .build();
+
+        Utf8SseEmitter emitter = new Utf8SseEmitter();
+
+
+        HttpClient.newHttpClient().sendAsync(request, respInfo ->
+        {
+            if (respInfo.statusCode() == 200) {
+                return new SseSubscriber((data) -> {
+                    SseEmitter.SseEventBuilder event = SseEmitter.event()
+                            .data(data);
+
+                    if (data.equals("[DONE]"))  emitter.complete();
+                    try {  emitter.send(event); }
+                    catch (IOException e) { emitter.completeWithError(e); }
+                });
+            }
+
+            try {
+                emitter.send("[Error]:[" + respInfo.statusCode() + "]");
+                emitter.complete();
+            } catch (IOException e) { emitter.completeWithError(e); }
+
+
+            return null;
+        });
+
+        return emitter;
     }
-
-    public Conversation getConversation(String name) {
-        final Optional<String> optional = lruCache.get(name);
-
-        return optional.map(message -> new Conversation(name, message)).orElse(null);
-    }
-
-    public boolean setConversation(Conversation conversation) {
-        return lruCache.put(conversation.name, conversation.message);
-    }
-}
+};

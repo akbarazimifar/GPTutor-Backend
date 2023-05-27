@@ -1,4 +1,4 @@
-package com.example.chatgpt;
+package com.chatgpt;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

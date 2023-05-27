@@ -1,4 +1,4 @@
-package com.example.chatgpt.services;
+package com.chatgpt.services;
 
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;

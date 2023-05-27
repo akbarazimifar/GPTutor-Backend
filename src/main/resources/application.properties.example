@@ -1,2 +1,4 @@
 api.keys=sk-qqwesaddd1kfwLayTInVI2o5qVT3Bl1resWkP5FIzUGZgMZsadqZuJx
 cors.allowed.origins=https://localhost:10888
+auth.client.secret=**************
+auth.skip=true

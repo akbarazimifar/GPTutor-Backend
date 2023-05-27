@@ -1,4 +1,4 @@
-package com.example.chatgpt.entity;
+package com.chatgpt.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

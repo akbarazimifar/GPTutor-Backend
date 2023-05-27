@@ -1,4 +1,4 @@
-package com.example.chatgpt.services;
+package com.chatgpt.services;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

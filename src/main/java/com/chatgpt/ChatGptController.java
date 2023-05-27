@@ -1,8 +1,8 @@
-package com.example.chatgpt;
+package com.chatgpt;
 
-import com.example.chatgpt.entity.ConversationRequest;
-import com.example.chatgpt.services.ApiKeysService;
-import com.example.chatgpt.services.ConversationsService;
+import com.chatgpt.entity.ConversationRequest;
+import com.chatgpt.services.ApiKeysService;
+import com.chatgpt.services.ConversationsService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.example.chatgpt.entity;
+package com.chatgpt.entity;
 
 public class Result<Body> {
     boolean success;

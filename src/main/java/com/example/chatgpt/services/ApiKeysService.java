@@ -14,13 +14,7 @@ public class ApiKeysService implements InitializingBean {
     private String apiKeys;
     private HashMap<String, Integer> apiKeysMap = new HashMap<>();
 
-    private final AESCipher aesCipher;
-
-    ApiKeysService(AESCipher aesCipher) {
-        this.aesCipher = aesCipher;
-    }
-
-    public void afterPropertiesSet() throws Exception
+    public void afterPropertiesSet()
     {
       setupApiKeysMap();
       scheduleReset();
@@ -35,11 +29,11 @@ public class ApiKeysService implements InitializingBean {
         this.apiKeysMap = hashMap;
     }
 
-    public String getKey() throws Exception {
+    public String getKey() {
         for (HashMap.Entry<String, Integer> item : apiKeysMap.entrySet()) {
             if (item.getValue() != 0) {
                 apiKeysMap.replace(item.getKey(), item.getValue() - 1);
-                return aesCipher.encodeMessage(item.getKey());
+                return item.getKey();
             }
         }
 

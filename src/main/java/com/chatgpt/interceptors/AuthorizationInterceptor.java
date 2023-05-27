@@ -55,7 +55,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         String checkString = queryParams.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith("vk_"))
                 .sorted(Map.Entry.comparingByKey())
-                .map(entry -> encode(entry.getKey()) + "=" + encode(entry.getValue()))
+                .map(entry -> encode(entry.getKey()) + "=" + (entry.getValue() == null ? encode("") : encode(entry.getValue())))
                 .collect(Collectors.joining("&"));
 
         String sign = getHashCode(checkString, clientSecret);

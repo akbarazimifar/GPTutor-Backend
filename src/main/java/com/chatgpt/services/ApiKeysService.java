@@ -1,4 +1,4 @@
-package com.example.chatgpt.services;
+package com.chatgpt.services;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;

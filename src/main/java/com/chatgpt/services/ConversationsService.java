@@ -1,7 +1,7 @@
-package com.example.chatgpt.services;
+package com.chatgpt.services;
 
-import com.example.chatgpt.entity.ChatGptRequest;
-import com.example.chatgpt.entity.ConversationRequest;
+import com.chatgpt.entity.ChatGptRequest;
+import com.chatgpt.entity.ConversationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

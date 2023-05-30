@@ -1,38 +1,20 @@
 package com.chatgpt.entity;
 
-import jakarta.persistence.*;
-
 import java.util.UUID;
 
-@Entity
-public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private History history;
+public class CreateMessageRequest {
+    private UUID historyId;
     private String content;
     private String role;
     private boolean isError;
     private boolean isFailedModeration;
 
-    public Message() {
+    public UUID getHistoryId() {
+        return historyId;
     }
 
-    public Message(History history, String content, String role, boolean isError, boolean isFailedModeration) {
-        this.history = history;
-        this.content = content;
-        this.role = role;
-        this.isError = isError;
-        this.isFailedModeration = isFailedModeration;
-    }
-
-    public History getHistory() {
-        return history;
-    }
-
-    public void setHistory(History history) {
-        this.history = history;
+    public void setHistoryId(UUID historyId) {
+        this.historyId = historyId;
     }
 
     public String getContent() {

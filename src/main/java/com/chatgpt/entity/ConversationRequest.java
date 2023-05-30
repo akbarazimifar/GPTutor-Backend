@@ -1,14 +1,14 @@
 package com.chatgpt.entity;
 
 public class ConversationRequest {
-    private Message[] messages;
+    private ConversationMessage[] messages;
     private String model;
 
-    public Message[] getMessages() {
+    public ConversationMessage[] getMessages() {
         return messages;
     }
 
-    public void setNumbers(Message[] messages) {
+    public void setNumbers(ConversationMessage[] messages) {
         this.messages = messages;
     }
 

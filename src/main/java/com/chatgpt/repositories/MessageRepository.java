@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface MessageRepository extends CrudRepository<Message, UUID> {
     Iterable<Message> findAllByHistoryId(UUID id);
+    void deleteAllByHistoryId(UUID id);
 }

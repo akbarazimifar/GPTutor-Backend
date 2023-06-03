@@ -8,7 +8,3 @@ CREATE TABLE message
     is_failed_moderation BOOLEAN,
     PRIMARY KEY (id)
 );
-
-alter table if exists message
-    add constraint message_vk_user_fk
-    foreign key (history_id) references history

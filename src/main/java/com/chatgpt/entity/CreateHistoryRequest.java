@@ -4,10 +4,17 @@ import java.util.UUID;
 
 public class CreateHistoryRequest {
     private UUID userVkId;
+
     private String lastMessage;
-    private String title;
+
+    private String type;
+
+    private String lessonName;
 
     private String systemMessage;
+
+    public CreateHistoryRequest() {
+    }
 
     public UUID getUserVkId() {
         return userVkId;
@@ -25,19 +32,27 @@ public class CreateHistoryRequest {
         this.lastMessage = lastMessage;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getSystemMessage() {
         return systemMessage;
     }
 
     public void setSystemMessage(String systemMessage) {
         this.systemMessage = systemMessage;
+    }
+
+    public String getLessonName() {
+        return lessonName;
+    }
+
+    public void setLessonName(String lessonName) {
+        this.lessonName = lessonName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

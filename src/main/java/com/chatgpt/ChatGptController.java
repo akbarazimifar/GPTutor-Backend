@@ -8,6 +8,7 @@ import com.chatgpt.services.ApiKeysService;
 import com.chatgpt.services.ConversationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -58,8 +59,9 @@ public class ChatGptController {
         var history = new History(
                 user.get(),
                 createHistoryRequest.getLastMessage(),
-                createHistoryRequest.getTitle(),
-                createHistoryRequest.getSystemMessage()
+                createHistoryRequest.getType(),
+                createHistoryRequest.getSystemMessage(),
+                createHistoryRequest.getLessonName()
         );
 
         historyRepository.save(history);
@@ -73,7 +75,9 @@ public class ChatGptController {
     }
 
     @DeleteMapping(path = "/history/{id}")
+    @Transactional
     public void deleteHistory(@PathVariable("id") UUID historyId) {
+        messageRepository.deleteAllByHistoryId(historyId);
         historyRepository.deleteById(historyId);
     }
 

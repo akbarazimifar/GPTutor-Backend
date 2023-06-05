@@ -92,7 +92,8 @@ public class ChatGptController {
                 createMessageRequest.getContent(),
                 createMessageRequest.getRole(),
                 createMessageRequest.isError(),
-                createMessageRequest.isFailedModeration()
+                createMessageRequest.isFailedModeration(),
+                createMessageRequest.getLastUpdated()
         );
 
         history.get().setLastMessage(message.getContent());
@@ -106,6 +107,6 @@ public class ChatGptController {
 
     @GetMapping(path = "/messages/{historyId}")
     public Iterable<Message> getMessages(@PathVariable("historyId") UUID historyId) throws Exception {
-        return messageRepository.findAllByHistoryId(historyId);
+        return messageRepository.findAllByHistoryIdOrderByCreatedAtAsc(historyId);
     }
 }

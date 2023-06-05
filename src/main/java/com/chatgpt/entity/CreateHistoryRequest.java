@@ -1,5 +1,6 @@
 package com.chatgpt.entity;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class CreateHistoryRequest {
@@ -12,6 +13,8 @@ public class CreateHistoryRequest {
     private String lessonName;
 
     private String systemMessage;
+
+    private Timestamp lastUpdated;
 
     public CreateHistoryRequest() {
     }
@@ -54,5 +57,13 @@ public class CreateHistoryRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Timestamp getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Timestamp lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

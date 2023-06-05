@@ -61,7 +61,8 @@ public class ChatGptController {
                 createHistoryRequest.getLastMessage(),
                 createHistoryRequest.getType(),
                 createHistoryRequest.getSystemMessage(),
-                createHistoryRequest.getLessonName()
+                createHistoryRequest.getLessonName(),
+                createHistoryRequest.getLastUpdated()
         );
 
         historyRepository.save(history);
@@ -95,6 +96,7 @@ public class ChatGptController {
         );
 
         history.get().setLastMessage(message.getContent());
+        history.get().setLastUpdated(createMessageRequest.getLastUpdated());
 
 
         messageRepository.save(message);

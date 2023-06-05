@@ -1,5 +1,6 @@
 package com.chatgpt.entity;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class CreateMessageRequest {
@@ -8,6 +9,8 @@ public class CreateMessageRequest {
     private String role;
     private boolean isError;
     private boolean isFailedModeration;
+
+    private Timestamp lastUpdated;
 
     public UUID getHistoryId() {
         return historyId;
@@ -47,5 +50,13 @@ public class CreateMessageRequest {
 
     public void setFailedModeration(boolean failedModeration) {
         isFailedModeration = failedModeration;
+    }
+
+    public Timestamp getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Timestamp lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

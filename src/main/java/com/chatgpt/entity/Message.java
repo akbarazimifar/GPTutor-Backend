@@ -2,6 +2,7 @@ package com.chatgpt.entity;
 
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
@@ -16,15 +17,18 @@ public class Message {
     private boolean isError;
     private boolean isFailedModeration;
 
+    private Timestamp createdAt;
+
     public Message() {
     }
 
-    public Message(History history, String content, String role, boolean isError, boolean isFailedModeration) {
+    public Message(History history, String content, String role, boolean isError, boolean isFailedModeration, Timestamp createdAt) {
         this.history = history;
         this.content = content;
         this.role = role;
         this.isError = isError;
         this.isFailedModeration = isFailedModeration;
+        this.createdAt = createdAt;
     }
 
     public History getHistory() {
@@ -73,5 +77,13 @@ public class Message {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

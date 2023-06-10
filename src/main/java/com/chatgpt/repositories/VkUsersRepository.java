@@ -7,5 +7,4 @@ import java.util.UUID;
 
 public interface VkUsersRepository extends CrudRepository<VkUser, UUID> {
     VkUser findByVkId(String vkId);
-
 }

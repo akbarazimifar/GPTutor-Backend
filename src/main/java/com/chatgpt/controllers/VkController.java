@@ -13,7 +13,7 @@ public class VkController {
     @Autowired
     VkService vkService;
 
-    @GetMapping(path = "/groups.isMember")
+    @GetMapping(path = "/groups-is-member")
     Boolean groupsIsMember(@RequestParam String groupId, @RequestParam String userId) throws JsonProcessingException {
         return vkService.groupIsMember(groupId, userId);
     }

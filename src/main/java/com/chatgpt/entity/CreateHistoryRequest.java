@@ -1,10 +1,8 @@
 package com.chatgpt.entity;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class CreateHistoryRequest {
-    private UUID userVkId;
 
     private String lastMessage;
 
@@ -17,14 +15,6 @@ public class CreateHistoryRequest {
     private Timestamp lastUpdated;
 
     public CreateHistoryRequest() {
-    }
-
-    public UUID getUserVkId() {
-        return userVkId;
-    }
-
-    public void setUserVkId(UUID userVkId) {
-        this.userVkId = userVkId;
     }
 
     public String getLastMessage() {

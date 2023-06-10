@@ -31,13 +31,20 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        if (skipAuth) return true;
+        if (skipAuth) {
+            request.setAttribute("vkUserId", "0");
+            return true;
+        }
 
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader != null) {
             boolean isSignSuccess = checkAuthorizationHeader(splitBearer(authorizationHeader));
-            if (isSignSuccess) return true;
+            if (isSignSuccess) {
+                request.setAttribute("vkUserId", getVkUserId(splitBearer(authorizationHeader)));
+
+                return true;
+            }
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
@@ -47,6 +54,10 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     String splitBearer(String header) {
         return header.substring(7);
+    }
+
+    String getVkUserId(String url) throws Exception {
+        return getQueryParams(new URL(url)).getOrDefault("vk_user_id", "0");
     }
 
     private boolean checkAuthorizationHeader(String url) throws Exception {
@@ -71,7 +82,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         final Map<String, String> result = new LinkedHashMap<>();
         final String[] pairs = query.split("&");
 
-        for (String pair:pairs) {
+        for (String pair : pairs) {
             int index = pair.indexOf("=");
             String key = index > 0 ? decode(pair.substring(0, index)) : pair;
             String value = index > 0 && pair.length() > index + 1 ? decode(pair.substring(index + 1)) : null;

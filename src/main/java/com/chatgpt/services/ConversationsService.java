@@ -3,6 +3,7 @@ package com.chatgpt.services;
 import com.chatgpt.entity.ChatGptRequest;
 import com.chatgpt.entity.ConversationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 
 
+@Service
 public class ConversationsService {
     public SseEmitter getConversation(ConversationRequest conversationRequest, String key) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

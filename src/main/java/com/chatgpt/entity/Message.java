@@ -10,7 +10,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     private History history;
     private String content;
     private String role;

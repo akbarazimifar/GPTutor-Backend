@@ -11,7 +11,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     private VkUser vkUser;
 
     private String lastMessage;
@@ -33,10 +33,6 @@ public class History {
         this.systemMessage = systemMessage;
         this.lessonName = lessonName;
         this.lastUpdated = lastUpdated;
-    }
-
-    public VkUser getVkUser() {
-        return vkUser;
     }
 
     public void setVkUser(VkUser vkUser) {

@@ -19,8 +19,8 @@ public class VkController {
 
     @GetMapping(path = "/groups-is-member")
     @RateLimiter(name = "vkLimit", fallbackMethod = "fallbackMethod")
-    Boolean groupsIsMember(@RequestParam String groupId, @RequestParam String userId) throws JsonProcessingException {
-        return vkService.groupIsMember(groupId, userId);
+    ResponseEntity<Boolean> groupsIsMember(@RequestParam String groupId, @RequestParam String userId) throws JsonProcessingException {
+        return ResponseEntity.ok().body(vkService.groupIsMember(groupId, userId));
     }
 
     public ResponseEntity<Object> fallbackMethod(Exception e) {

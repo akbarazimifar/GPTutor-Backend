@@ -17,18 +17,21 @@ public class Message {
     private boolean isError;
     private boolean isFailedModeration;
 
+    private boolean inLocal;
+
     private Timestamp createdAt;
 
     public Message() {
     }
 
-    public Message(History history, String content, String role, boolean isError, boolean isFailedModeration, Timestamp createdAt) {
+    public Message(History history, String content, String role, boolean isError, boolean isFailedModeration, Timestamp createdAt, boolean inLocal) {
         this.history = history;
         this.content = content;
         this.role = role;
         this.isError = isError;
         this.isFailedModeration = isFailedModeration;
         this.createdAt = createdAt;
+        this.inLocal = inLocal;
     }
 
     public History getHistory() {
@@ -85,5 +88,13 @@ public class Message {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isInLocal() {
+        return inLocal;
+    }
+
+    public void setInLocal(boolean inLocal) {
+        this.inLocal = inLocal;
     }
 }

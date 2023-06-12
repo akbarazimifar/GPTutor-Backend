@@ -27,7 +27,9 @@ public class MessageService {
                 createMessageRequest.getRole(),
                 createMessageRequest.isError(),
                 createMessageRequest.isFailedModeration(),
-                createMessageRequest.getLastUpdated()
+                createMessageRequest.getLastUpdated(),
+                createMessageRequest.isInLocal()
+
         );
 
         history.get().setLastMessage(message.getContent());

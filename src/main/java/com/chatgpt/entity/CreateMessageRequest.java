@@ -8,6 +8,7 @@ public class CreateMessageRequest {
     private String content;
     private String role;
     private boolean isError;
+    private boolean inLocal;
     private boolean isFailedModeration;
 
     private Timestamp lastUpdated;
@@ -58,5 +59,14 @@ public class CreateMessageRequest {
 
     public void setLastUpdated(Timestamp lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+
+    public void setInLocal(boolean inLocal) {
+        this.inLocal = inLocal;
+    }
+
+    public boolean isInLocal() {
+        return inLocal;
     }
 }

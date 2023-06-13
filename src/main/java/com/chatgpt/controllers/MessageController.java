@@ -25,11 +25,13 @@ public class MessageController {
 
     @GetMapping(path = "/messages/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Iterable<Message>> getMessages(@PathVariable("historyId") UUID historyId) {
+    public ResponseEntity<Iterable<Message>> getMessages(@PathVariable("historyId") UUID historyId) throws Exception {
         return ResponseEntity.ok().body(messageService.getMessagesByHistoryId(historyId));
     }
 
-    public ResponseEntity<Object> fallbackMethod(Exception e) {
+    public ResponseEntity<Object> fallbackMethod(Exception e) throws Exception {
+        if (e != null) throw e;
+
         throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests");
     }
 }

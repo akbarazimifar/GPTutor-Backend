@@ -29,7 +29,9 @@ public class ConversationController {
         return (T) conversationsService.getConversation(conversationRequest, this.apiKeysService.getKey());
     }
 
-    public ResponseEntity<Object> fallbackMethod(Exception e) {
+    public ResponseEntity<Object> fallbackMethod(Exception e) throws Exception {
+        if (e != null) throw e;
+
         throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests");
     }
 

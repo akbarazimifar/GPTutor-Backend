@@ -17,7 +17,7 @@ public class Message {
     private boolean isError;
     private boolean isFailedModeration;
 
-    private boolean inLocal;
+    private Boolean inLocal;
 
     private Timestamp createdAt;
 
@@ -90,11 +90,11 @@ public class Message {
         this.createdAt = createdAt;
     }
 
-    public boolean isInLocal() {
+    public Boolean isInLocal() {
         return inLocal;
     }
 
-    public void setInLocal(boolean inLocal) {
+    public void setInLocal(Boolean inLocal) {
         this.inLocal = inLocal;
     }
 }

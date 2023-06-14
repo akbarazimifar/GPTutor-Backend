@@ -7,6 +7,7 @@ import com.chatgpt.services.HistoryService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,17 @@ public class HistoryController {
 
     @GetMapping(path = "/history")
     @RateLimiter(name = "historyLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Iterable<History>> getHistoryById(HttpServletRequest request) {
-        return ResponseEntity.ok().body(historyService.getAllHistory((String) request.getAttribute("vkUserId")));
+    public ResponseEntity<Page<History>> getHistoryById(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return ResponseEntity.ok().body(
+                historyService.getAllHistory((String) request.getAttribute("vkUserId"),
+                        pageNumber,
+                        pageSize
+                )
+        );
     }
 
     @DeleteMapping(path = "/history/{id}")

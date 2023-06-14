@@ -6,6 +6,9 @@ import com.chatgpt.repositories.HistoryRepository;
 import com.chatgpt.repositories.MessageRepository;
 import com.chatgpt.repositories.VkUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -43,9 +46,10 @@ public class HistoryService {
     }
 
 
-    public Iterable<History> getAllHistory(String vkUserId) {
+    public Page<History> getAllHistory(String vkUserId, int pageNumber, int pageSize) {
+        PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by("lastUpdated").descending());
         var user = userService.getOrCreateVkUser(vkUserId);
-        return historyRepository.findAllByVkUserId(user.getId());
+        return historyRepository.findAllByVkUserId(user.getId(),  pageable);
     }
 
     public void deleteHistory(UUID historyId) {

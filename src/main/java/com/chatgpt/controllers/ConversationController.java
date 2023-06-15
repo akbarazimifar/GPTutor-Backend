@@ -20,13 +20,10 @@ public class ConversationController {
     @Autowired
     ConversationsService conversationsService;
 
-    @Autowired
-    ApiKeysService apiKeysService;
-
     @PostMapping(path = "/conversation", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RateLimiter(name = "conversationLimit", fallbackMethod = "fallbackMethod")
     public <T> T getConversation(@RequestBody ConversationRequest conversationRequest) throws IOException {
-        return (T) conversationsService.getConversation(conversationRequest, this.apiKeysService.getKey());
+        return (T) conversationsService.getConversation(conversationRequest);
     }
 
     public ResponseEntity<Object> fallbackMethod(Exception e) throws Exception {

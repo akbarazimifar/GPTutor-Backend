@@ -59,13 +59,13 @@ public class ConversationsService {
             }
 
             try {
-                if (attempt == 6) {
+                if (attempt == 15) {
                     emitter.send("[Error]:[" + respInfo.statusCode() + "]");
                     emitter.complete();
                     return null;
                 }
 
-                Thread.sleep(10000);
+                Thread.sleep(2000);
                 fetchCompletion(emitter, input, attempt + 1);
             } catch (IOException | InterruptedException e) {
                 emitter.completeWithError(e);

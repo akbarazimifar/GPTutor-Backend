@@ -31,6 +31,14 @@ public class ApiKeysService implements InitializingBean {
         this.apiKeysMap = hashMap;
     }
 
+    void refreshApiKeysMap() {
+        for (HashMap.Entry<String, Integer> item : apiKeysMap.entrySet()) {
+            if (item.getValue() != 3) {
+                apiKeysMap.replace(item.getKey(), item.getValue() + 1);
+            }
+        }
+    }
+
     public String getKey() {
         for (HashMap.Entry<String, Integer> item : apiKeysMap.entrySet()) {
             if (item.getValue() != 0) {
@@ -44,6 +52,6 @@ public class ApiKeysService implements InitializingBean {
 
     private void scheduleReset() {
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() { public void run() { setupApiKeysMap(); } }, 0, 60 * 1000);
+        timer.schedule(new TimerTask() { public void run() { refreshApiKeysMap(); } }, 0, 20 * 1000);
     }
 }

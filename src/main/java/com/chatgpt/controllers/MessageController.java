@@ -20,8 +20,8 @@ public class MessageController {
 
     @PostMapping(path = "/messages")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Message> createMessage(@RequestBody CreateMessageRequest createMessageRequest) throws Exception {
-        return ResponseEntity.ok().body(messageService.createMessage(createMessageRequest));
+    public ResponseEntity<Message> createMessage(HttpServletRequest request, @RequestBody CreateMessageRequest createMessageRequest) throws Exception {
+        return ResponseEntity.ok().body(messageService.createMessage((String) request.getAttribute("vkUserId"), createMessageRequest));
     }
 
     @GetMapping(path = "/messages/{historyId}")

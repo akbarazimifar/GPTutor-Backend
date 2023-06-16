@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -52,8 +54,20 @@ public class HistoryService {
         return historyRepository.findAllByVkUserId(user.getId(),  pageable);
     }
 
-    public void deleteHistory(UUID historyId) {
+    public void deleteHistory(String vkUserId, UUID historyId) {
+        checkHistory(vkUserId, historyId);
+
         messageRepository.deleteAllByHistoryId(historyId);
         historyRepository.deleteById(historyId);
+    }
+
+    private void checkHistory(String vkUserId, UUID historyId) {
+        var user = userService.getOrCreateVkUser(vkUserId);
+        var foundHistory = historyRepository.findById(historyId);
+        if (foundHistory.isPresent()) {
+            if (user.getId() != foundHistory.get().getVkUser().getId()) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
     }
 }

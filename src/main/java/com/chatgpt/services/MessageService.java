@@ -22,9 +22,11 @@ public class MessageService {
     @Autowired
     MessageRepository messageRepository;
 
-   public Message createMessage(CreateMessageRequest createMessageRequest) throws Exception {
+   public Message createMessage(String vkUserId, CreateMessageRequest createMessageRequest) throws Exception {
         var history = historyRepository.findById(createMessageRequest.getHistoryId());
         if (history.isEmpty()) throw new Exception("Not a found");
+
+       checkHistory(vkUserId, createMessageRequest.getHistoryId());
 
         var message = new Message(
                 history.get(),

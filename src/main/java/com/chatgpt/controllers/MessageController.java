@@ -4,6 +4,7 @@ import com.chatgpt.entity.CreateMessageRequest;
 import com.chatgpt.entity.Message;
 import com.chatgpt.services.MessageService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class MessageController {
 
     @GetMapping(path = "/messages/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Iterable<Message>> getMessages(@PathVariable("historyId") UUID historyId) throws Exception {
-        return ResponseEntity.ok().body(messageService.getMessagesByHistoryId(historyId));
+    public ResponseEntity<Iterable<Message>> getMessages(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
+        return ResponseEntity.ok().body(messageService.getMessagesByHistoryId((String) request.getAttribute("vkUserId"), historyId));
     }
 
     public ResponseEntity<Object> fallbackMethod(Exception e) throws Exception {

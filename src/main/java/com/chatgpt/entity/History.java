@@ -11,6 +11,10 @@ public class History {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    public VkUser getVkUser() {
+        return vkUser;
+    }
+
     @ManyToOne()
     private VkUser vkUser;
 

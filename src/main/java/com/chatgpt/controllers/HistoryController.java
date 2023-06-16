@@ -50,8 +50,8 @@ public class HistoryController {
     @DeleteMapping(path = "/history/{id}")
     @RateLimiter(name = "historyLimit", fallbackMethod = "fallbackMethod")
     @Transactional
-    public ResponseEntity<String> deleteHistory(@PathVariable("id") UUID historyId) {
-        historyService.deleteHistory(historyId);
+    public ResponseEntity<String> deleteHistory(HttpServletRequest request, @PathVariable("id") UUID historyId) {
+        historyService.deleteHistory((String) request.getAttribute("vkUserId"), historyId);
 
         return ResponseEntity.ok().body("");
     }

@@ -5,12 +5,17 @@ import com.chatgpt.entity.Message;
 import com.chatgpt.repositories.HistoryRepository;
 import com.chatgpt.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
 @Service
 public class MessageService {
+    @Autowired
+    UserService userService;
+
     @Autowired
     HistoryRepository historyRepository;
 
@@ -42,7 +47,20 @@ public class MessageService {
 
     }
 
-    public Iterable<Message> getMessagesByHistoryId(UUID historyId) {
+    public Iterable<Message> getMessagesByHistoryId(String vkUserId, UUID historyId) {
+        checkHistory(vkUserId, historyId);
+
         return messageRepository.findAllByHistoryIdOrderByCreatedAtAsc(historyId);
+    }
+
+    private void checkHistory(String vkUserId, UUID historyId) {
+        var user = userService.getOrCreateVkUser(vkUserId);
+        var foundHistory = historyRepository.findById(historyId);
+
+        if (foundHistory.isPresent()) {
+            if (user.getId() != foundHistory.get().getVkUser().getId()) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
     }
 }

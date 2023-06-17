@@ -65,7 +65,7 @@ public class ConversationsService {
                     return null;
                 }
 
-                Thread.sleep(5000);
+                Thread.sleep(2000);
                 fetchCompletion(emitter, input, attempt + 1);
             } catch (IOException | InterruptedException e) {
                 emitter.completeWithError(e);

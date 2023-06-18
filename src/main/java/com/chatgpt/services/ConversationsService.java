@@ -2,8 +2,10 @@ package com.chatgpt.services;
 
 import com.chatgpt.entity.ChatGptRequest;
 import com.chatgpt.entity.ConversationRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.util.Objects;
 
 
 @Service
@@ -19,25 +22,33 @@ public class ConversationsService {
     ApiKeysService apiKeysService;
 
     public SseEmitter getConversation(ConversationRequest conversationRequest) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
 
-        ChatGptRequest chatGptRequest = new ChatGptRequest(conversationRequest.getModel(), conversationRequest.getMessages(), true);
-        String input = mapper.writeValueAsString(chatGptRequest);
 
         Utf8SseEmitter emitter = new Utf8SseEmitter();
 
-        fetchCompletion(emitter, input, 0);
+        fetchCompletion(emitter, conversationRequest,0);
 
         return emitter;
     }
 
-    public void fetchCompletion(Utf8SseEmitter emitter, String input,int attempt) {
-        String apiKey = apiKeysService.getKey();
+    public void fetchCompletion(Utf8SseEmitter emitter, ConversationRequest conversationRequest, int attempt) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
 
+        Pair<String, String> apiKey = apiKeysService.getKey();
+
+        ChatGptRequest chatGptRequest = new ChatGptRequest(
+                Objects.equals(apiKey.getSecond(), "120") ?
+                        "gpt-3.5-turbo-0613" :
+                        "gpt-3.5-turbo-16k",
+                conversationRequest.getMessages(),
+                true
+        );
+
+        String input = mapper.writeValueAsString(chatGptRequest);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.openai.com/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
+                .header("Authorization", "Bearer " + apiKey.getFirst())
                 .POST(HttpRequest.BodyPublishers.ofString(input))
                 .build();
 
@@ -66,7 +77,7 @@ public class ConversationsService {
                 }
 
                 Thread.sleep(2000);
-                fetchCompletion(emitter, input, attempt + 1);
+                fetchCompletion(emitter, conversationRequest, attempt + 1);
             } catch (IOException | InterruptedException e) {
                 emitter.completeWithError(e);
             }

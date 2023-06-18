@@ -1,4 +1,5 @@
-api.keys=
+api.keys.5dollars=
+api.keys.120dollars=
 cors.allowed.origins=https://localhost:10888
 auth.skip=true
 

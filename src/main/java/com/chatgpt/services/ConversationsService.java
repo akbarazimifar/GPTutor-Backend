@@ -76,6 +76,10 @@ public class ConversationsService {
                     return null;
                 }
 
+                if (respInfo.statusCode() == 429) {
+                    apiKeysService.detachKey(apiKey);
+                }
+
                 Thread.sleep(2000);
                 fetchCompletion(emitter, conversationRequest, attempt + 1);
             } catch (IOException | InterruptedException e) {

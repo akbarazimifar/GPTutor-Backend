@@ -109,4 +109,14 @@ public class ApiKeysService implements InitializingBean {
         }, 0, 60 * 1000);
     }
 
+    public void detachKey(Pair<String, String> key) {
+        if (Objects.equals(key.getSecond(), "5")) {
+            apiKeysMap5dollars.replace(key.getFirst(), 0);
+        }
+
+        if (Objects.equals(key.getSecond(), "120")) {
+            apiKeysMap120dollars.replace(key.getFirst(), 0);
+        }
+    }
+
 }

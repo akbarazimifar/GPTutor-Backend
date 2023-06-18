@@ -2,10 +2,10 @@ package com.chatgpt.services;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 
 
 @Service
@@ -22,10 +22,9 @@ public class ApiKeysService implements InitializingBean {
     private HashMap<String, Integer> apiKeysMap5dollars = new HashMap<>();
     private HashMap<String, Integer> apiKeysMap120dollars = new HashMap<>();
 
-    public void afterPropertiesSet()
-    {
-      setupApiKeysMap();
-      scheduleReset();
+    public void afterPropertiesSet() {
+        setupApiKeysMap();
+        scheduleReset();
     }
 
     void setupApiKeysMap() {
@@ -33,10 +32,15 @@ public class ApiKeysService implements InitializingBean {
         final List<String> splitApiKeys120dollars = Arrays.asList(this.apiKeys120dollars.split(","));
 
         final HashMap<String, Integer> hashMap5dollars = new HashMap<>();
-        splitApiKeys5dollars.forEach((item) -> hashMap5dollars.put(item, ATTEMPTS_5_DOLLARS));
+        if (this.apiKeys5dollars.length() > 0) {
+            splitApiKeys5dollars.forEach((item) -> hashMap5dollars.put(item, ATTEMPTS_5_DOLLARS));
+        }
 
         final HashMap<String, Integer> hashMap120dollars = new HashMap<>();
-        splitApiKeys120dollars.forEach((item) -> hashMap120dollars.put(item, ATTEMPTS_120_DOLLARS));
+
+        if (this.apiKeys120dollars.length() > 0) {
+            splitApiKeys120dollars.forEach((item) -> hashMap120dollars.put(item, ATTEMPTS_120_DOLLARS));
+        }
 
         this.apiKeysMap5dollars = hashMap5dollars;
         this.apiKeysMap120dollars = hashMap120dollars;
@@ -52,9 +56,9 @@ public class ApiKeysService implements InitializingBean {
     }
 
     void refreshApiKeysMap120Dollars() {
-        for (HashMap.Entry<String, Integer> item : apiKeysMap5dollars.entrySet()) {
+        for (HashMap.Entry<String, Integer> item : apiKeysMap120dollars.entrySet()) {
             if (item.getValue() != ATTEMPTS_120_DOLLARS) {
-                apiKeysMap5dollars.replace(item.getKey(), ATTEMPTS_120_DOLLARS);
+                apiKeysMap120dollars.replace(item.getKey(), ATTEMPTS_120_DOLLARS);
             }
         }
     }
@@ -74,6 +78,7 @@ public class ApiKeysService implements InitializingBean {
         for (HashMap.Entry<String, Integer> item : apiKeysMap120dollars.entrySet()) {
             if (item.getValue() != 0) {
                 apiKeysMap120dollars.replace(item.getKey(), item.getValue() - 1);
+                System.out.println(item.getKey());
                 return item.getKey();
             }
         }
@@ -81,19 +86,27 @@ public class ApiKeysService implements InitializingBean {
         return null;
     }
 
-    public String getKey() {
-        var key120 = getKey120dollars();
-        if(key120 != null) return  key120;
+    public Pair<String, String> getKey() {
+        var key = getKey5dollars();
+        if (key != null) return Pair.of(key, "5");
 
-        return getKey5dollars();
+        return Pair.of(getKey120dollars(), "120");
     }
 
     private void scheduleReset() {
         Timer timer5 = new Timer();
-        timer5.schedule(new TimerTask() { public void run() { refreshApiKeysMap5Dollars(); } }, 0, 20 * 1000);
+        timer5.schedule(new TimerTask() {
+            public void run() {
+                refreshApiKeysMap5Dollars();
+            }
+        }, 0, 20 * 1000);
 
         Timer timer120 = new Timer();
-        timer120.schedule(new TimerTask() { public void run() { refreshApiKeysMap120Dollars(); } },0, 60 * 1000);
+        timer120.schedule(new TimerTask() {
+            public void run() {
+                refreshApiKeysMap120Dollars();
+            }
+        }, 0, 60 * 1000);
     }
 
 }

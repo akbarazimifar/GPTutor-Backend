@@ -1,5 +1,6 @@
 package com.chatgpt.services;
 
+import com.chatgpt.entity.ApiKey;
 import com.chatgpt.entity.ChatGptRequest;
 import com.chatgpt.entity.ConversationRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,11 +23,9 @@ public class ConversationsService {
     ApiKeysService apiKeysService;
 
     public SseEmitter getConversation(ConversationRequest conversationRequest) throws IOException {
-
-
         Utf8SseEmitter emitter = new Utf8SseEmitter();
 
-        fetchCompletion(emitter, conversationRequest,0);
+        fetchCompletion(emitter, conversationRequest, 0);
 
         return emitter;
     }
@@ -34,7 +33,7 @@ public class ConversationsService {
     public void fetchCompletion(Utf8SseEmitter emitter, ConversationRequest conversationRequest, int attempt) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
-        Pair<String, String> apiKey = apiKeysService.getKey();
+        Pair<ApiKey, String> apiKey = apiKeysService.getKey();
 
         ChatGptRequest chatGptRequest = new ChatGptRequest(
                 Objects.equals(apiKey.getSecond(), "120") ?
@@ -48,7 +47,7 @@ public class ConversationsService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.openai.com/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey.getFirst())
+                .header("Authorization", "Bearer " + apiKey.getFirst().getKey())
                 .POST(HttpRequest.BodyPublishers.ofString(input))
                 .build();
 
@@ -77,7 +76,7 @@ public class ConversationsService {
                 }
 
                 if (respInfo.statusCode() == 429) {
-                    apiKeysService.detachKey(apiKey);
+                    apiKey.getFirst().setBlocked(true);
                 }
 
                 Thread.sleep(2000);

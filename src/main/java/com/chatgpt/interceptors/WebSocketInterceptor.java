@@ -35,7 +35,7 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
 
             System.out.println(isSignSuccess);
             if (isSignSuccess) {
-                attributes.put("vkUserId", authCheckerService.getVkUserId(authorizationHeader);
+                attributes.put("vkUserId", authCheckerService.getVkUserId(authorizationHeader));
 
                 return true;
             }

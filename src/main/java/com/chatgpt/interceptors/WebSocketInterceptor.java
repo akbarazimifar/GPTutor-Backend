@@ -28,14 +28,14 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
         }
 
         String authorizationHeader = String.valueOf(request.getURI());
+        System.out.println(authorizationHeader);
 
         if (authorizationHeader != null) {
             boolean isSignSuccess = authCheckerService.checkAuthorizationHeader(authorizationHeader);
 
+            System.out.println(isSignSuccess);
             if (isSignSuccess) {
-                attributes.put("vkUserId", authCheckerService.getVkUserId(
-                        authCheckerService.splitBearer(authorizationHeader)
-                ));
+                attributes.put("vkUserId", authCheckerService.getVkUserId(authorizationHeader);
 
                 return true;
             }

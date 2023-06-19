@@ -1,5 +1,6 @@
 package com.chatgpt.services;
 
+import com.chatgpt.entity.ApiKey;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -19,19 +20,19 @@ public class ApiKeysService implements InitializingBean {
     @Value("${api.keys.120dollars}")
     private String apiKeys120dollars;
 
-    private HashMap<String, Integer> apiKeysMap5dollars = new HashMap<>();
-    private HashMap<String, Integer> apiKeysMap120dollars = new HashMap<>();
+    private ArrayList<ApiKey> apiKeys5dollarsList = new ArrayList<>();
+    private ArrayList<ApiKey> apiKeys120dollarsList = new ArrayList<>();
 
-    public HashMap<String, Integer> getApiKeysMap(String keyType) {
+    public ArrayList<ApiKey> getApiKeysMap(String keyType) {
         if (Objects.equals(keyType, "5")) {
-            return this.apiKeysMap5dollars;
+            return this.apiKeys5dollarsList;
         }
 
         if (Objects.equals(keyType, "120")) {
-            return this.apiKeysMap120dollars;
+            return this.apiKeys120dollarsList;
         }
 
-        return new HashMap<>();
+        return new ArrayList<>();
     }
 
 
@@ -44,62 +45,56 @@ public class ApiKeysService implements InitializingBean {
         final List<String> splitApiKeys5dollars = Arrays.asList(this.apiKeys5dollars.split(","));
         final List<String> splitApiKeys120dollars = Arrays.asList(this.apiKeys120dollars.split(","));
 
-        final HashMap<String, Integer> hashMap5dollars = new HashMap<>();
+        final ArrayList<ApiKey> list5dollars = new ArrayList<>();
         if (this.apiKeys5dollars.length() > 0) {
-            splitApiKeys5dollars.forEach((item) -> hashMap5dollars.put(item, ATTEMPTS_5_DOLLARS));
+            splitApiKeys5dollars.forEach((key) -> list5dollars.add(new ApiKey(key, ATTEMPTS_5_DOLLARS)));
         }
 
-        final HashMap<String, Integer> hashMap120dollars = new HashMap<>();
-
+        final ArrayList<ApiKey> list120dollars = new ArrayList<>();
         if (this.apiKeys120dollars.length() > 0) {
-            splitApiKeys120dollars.forEach((item) -> hashMap120dollars.put(item, ATTEMPTS_120_DOLLARS));
+            splitApiKeys120dollars.forEach((key) -> list120dollars.add(new ApiKey(key, ATTEMPTS_120_DOLLARS)));
         }
 
-        this.apiKeysMap5dollars = hashMap5dollars;
-        this.apiKeysMap120dollars = hashMap120dollars;
+        this.apiKeys5dollarsList = list5dollars;
+        this.apiKeys120dollarsList = list120dollars;
     }
 
 
     void refreshApiKeysMap5Dollars() {
-        for (HashMap.Entry<String, Integer> item : apiKeysMap5dollars.entrySet()) {
-            if (item.getValue() != ATTEMPTS_5_DOLLARS) {
-                apiKeysMap5dollars.replace(item.getKey(), item.getValue() + 1);
-            }
+        for (ApiKey item : apiKeys5dollarsList) {
+            item.incrementAttempts();
         }
     }
 
     void refreshApiKeysMap120Dollars() {
-        for (HashMap.Entry<String, Integer> item : apiKeysMap120dollars.entrySet()) {
-            if (item.getValue() != ATTEMPTS_120_DOLLARS) {
-                apiKeysMap120dollars.replace(item.getKey(), ATTEMPTS_120_DOLLARS);
-            }
+        for (ApiKey item : apiKeys120dollarsList) {
+            item.resetAttempts();
         }
     }
 
-    public String getKey5dollars() {
-        for (HashMap.Entry<String, Integer> item : apiKeysMap5dollars.entrySet()) {
-            if (item.getValue() != 0) {
-                apiKeysMap5dollars.replace(item.getKey(), item.getValue() - 1);
-                return item.getKey();
-            }
-        }
-
-        return null;
-    }
-
-    public String getKey120dollars() {
-        for (HashMap.Entry<String, Integer> item : apiKeysMap120dollars.entrySet()) {
-            if (item.getValue() != 0) {
-                apiKeysMap120dollars.replace(item.getKey(), item.getValue() - 1);
-                System.out.println(item.getKey());
-                return item.getKey();
+    public ApiKey getKey5dollars() {
+        for (ApiKey item : this.apiKeys5dollarsList) {
+            if (item.getAttempts() != 0 && !item.isBlocked()) {
+                item.decrementAttempts();
+                return item;
             }
         }
 
         return null;
     }
 
-    public Pair<String, String> getKey() {
+    public ApiKey getKey120dollars() {
+        for (ApiKey item : this.apiKeys120dollarsList) {
+            if (item.getAttempts() != 0  && !item.isBlocked()) {
+                item.decrementAttempts();
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public Pair<ApiKey, String> getKey() {
         var key = getKey5dollars();
         if (key != null) return Pair.of(key, "5");
 
@@ -121,15 +116,4 @@ public class ApiKeysService implements InitializingBean {
             }
         }, 0, 60 * 1000);
     }
-
-    public void detachKey(Pair<String, String> key) {
-        if (Objects.equals(key.getSecond(), "5")) {
-            apiKeysMap5dollars.replace(key.getFirst(), 0);
-        }
-
-        if (Objects.equals(key.getSecond(), "120")) {
-            apiKeysMap120dollars.replace(key.getFirst(), 0);
-        }
-    }
-
 }

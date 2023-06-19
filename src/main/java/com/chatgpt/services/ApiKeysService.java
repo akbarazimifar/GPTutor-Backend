@@ -22,6 +22,19 @@ public class ApiKeysService implements InitializingBean {
     private HashMap<String, Integer> apiKeysMap5dollars = new HashMap<>();
     private HashMap<String, Integer> apiKeysMap120dollars = new HashMap<>();
 
+    public HashMap<String, Integer> getApiKeysMap(String keyType) {
+        if (Objects.equals(keyType, "5")) {
+            return this.apiKeysMap5dollars;
+        }
+
+        if (Objects.equals(keyType, "120")) {
+            return this.apiKeysMap120dollars;
+        }
+
+        return new HashMap<>();
+    }
+
+
     public void afterPropertiesSet() {
         setupApiKeysMap();
         scheduleReset();

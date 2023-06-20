@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface HistoryRepository extends CrudRepository<History, UUID> {
     Page<History> findAllByVkUserId(UUID vkId, PageRequest pageable);
+    void deleteAllByVkUserId(UUID vkId);
 }

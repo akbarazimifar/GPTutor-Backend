@@ -61,6 +61,15 @@ public class HistoryService {
         historyRepository.deleteById(historyId);
     }
 
+    public void deleteAllHistory(String vkUserId) {
+        var user = userService.getOrCreateVkUser(vkUserId);
+        var histories = historyRepository.findAllByVkUserId(user.getId(), PageRequest.of(0, Integer.MAX_VALUE));
+        var messages = messageRepository.findByHistoryIdIn(histories.get().map(History::getId).toList());
+
+        messageRepository.deleteAll(messages);
+        historyRepository.deleteAllByVkUserId(user.getId());
+    }
+
     private void checkHistory(String vkUserId, UUID historyId) {
         var user = userService.getOrCreateVkUser(vkUserId);
         var foundHistory = historyRepository.findById(historyId);

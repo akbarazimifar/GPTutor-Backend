@@ -5,14 +5,14 @@ auth.skip=true
 
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.url=jdbc:postgresql://localhost/postgres
-spring.datasource.username=postgres
-spring.datasource.password=123
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
 spring.jpa.show-sql=true
 spring.jpa.hibernate.ddl-auto=none
 
 spring.flyway.url=jdbc:postgresql://localhost/postgres
-spring.flyway.user=postgres
-spring.flyway.password=123
+spring.flyway.user=${POSTGRES_USER}
+spring.flyway.password=${POSTGRES_PASSWORD}
 
 resilience4j.ratelimiter.instances.conversationLimit.register-health-indicator=true
 resilience4j.ratelimiter.instances.conversationLimit.limit-for-period=6

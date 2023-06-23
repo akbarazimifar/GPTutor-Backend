@@ -1,7 +1,9 @@
 api.keys.5dollars=
 api.keys.120dollars=
-cors.allowed.origins=https://localhost:10888
-auth.skip=true
+cors.allowed.origins=${CORS_ORIGIN}
+auth.skip=${CHECK_AUTH}
+vk.key=${VK_KEY}
+auth.client.secret=${AUTH_SECRET_KEY}
 
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.url=jdbc:postgresql://localhost/postgres

@@ -36,9 +36,7 @@ public class ConversationsService {
         Pair<ApiKey, String> apiKey = apiKeysService.getKey();
 
         ChatGptRequest chatGptRequest = new ChatGptRequest(
-                Objects.equals(apiKey.getSecond(), "120") ?
-                        "gpt-3.5-turbo-0613" :
-                        "gpt-3.5-turbo-16k",
+                "gpt-3.5-turbo-16k",
                 conversationRequest.getMessages(),
                 true
         );

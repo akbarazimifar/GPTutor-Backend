@@ -36,20 +36,9 @@ public class MessageController {
 
     @GetMapping(path = "/messages/json/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<ByteArrayResource> getMessagesJson(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
-        var messages = messageService.getMessagesByHistoryId((String) request.getAttribute("vkUserId"), historyId);
-
-        ObjectMapper mapper = new ObjectMapper();
-        byte[] jsonBytes = mapper.writeValueAsBytes(messages);
-
-        ByteArrayResource resource = new ByteArrayResource(jsonBytes);
-
-
+    public ResponseEntity<Iterable<Message>> getMessagesJson(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.json")
-                .contentType(MediaType.APPLICATION_JSON)
-                .contentLength(jsonBytes.length)
-                .body(resource);
+                .body(messageService.getMessagesByHistoryId((String) request.getAttribute("vkUserId"), historyId));
     }
     @GetMapping(path = "/messages/txt/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
@@ -60,16 +49,10 @@ public class MessageController {
 
         while (messages.hasNext()) {
             var message = messages.next();
-            System.out.println(message);
             text.append(message.getRole()).append("\n\n").append(message.getContent()).append("\n\n");
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.txt");
-
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(text.toString());
     }
 

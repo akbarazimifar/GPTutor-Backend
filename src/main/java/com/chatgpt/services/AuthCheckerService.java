@@ -27,12 +27,20 @@ public class AuthCheckerService {
     }
 
     public String getVkUserId(String url) throws Exception {
-        return getQueryParams(new URL(url)).getOrDefault("vk_user_id", "0");
+        return getVkUserIdFromParams(getQueryParams(new URL(url)));
+    }
+
+    public String getVkUserIdFromParams( Map<String, String> params) {
+        return params.getOrDefault("vk_user_id", "0");
     }
 
     public boolean checkAuthorizationHeader(String url) throws Exception {
         Map<String, String> queryParams = getQueryParams(new URL(url));
 
+        return checkAuthorizationHeaderByParams(queryParams);
+    }
+
+    public boolean checkAuthorizationHeaderByParams(Map<String, String> queryParams) throws Exception {
         String checkString = queryParams.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith("vk_"))
                 .sorted(Map.Entry.comparingByKey())

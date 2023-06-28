@@ -12,10 +12,7 @@ import java.util.*;
 @Service
 public class ApiKeysService implements InitializingBean {
     final int ATTEMPTS_5_DOLLARS = 3;
-    final int ATTEMPTS_120_DOLLARS = 72;
-
-    @Value("${api.keys.5dollars}")
-    private String apiKeys5dollars;
+    final int ATTEMPTS_120_DOLLARS = 96;
 
     @Value("${api.keys.120dollars}")
     private String apiKeys120dollars;
@@ -24,10 +21,6 @@ public class ApiKeysService implements InitializingBean {
     private ArrayList<ApiKey> apiKeys120dollarsList = new ArrayList<>();
 
     public ArrayList<ApiKey> getApiKeysMap(String keyType) {
-        if (Objects.equals(keyType, "5")) {
-            return this.apiKeys5dollarsList;
-        }
-
         if (Objects.equals(keyType, "120")) {
             return this.apiKeys120dollarsList;
         }
@@ -42,13 +35,9 @@ public class ApiKeysService implements InitializingBean {
     }
 
     void setupApiKeysMap() {
-        final List<String> splitApiKeys5dollars = Arrays.asList(this.apiKeys5dollars.split(","));
         final List<String> splitApiKeys120dollars = Arrays.asList(this.apiKeys120dollars.split(","));
 
         final ArrayList<ApiKey> list5dollars = new ArrayList<>();
-        if (this.apiKeys5dollars.length() > 0) {
-            splitApiKeys5dollars.forEach((key) -> list5dollars.add(new ApiKey(key, ATTEMPTS_5_DOLLARS)));
-        }
 
         final ArrayList<ApiKey> list120dollars = new ArrayList<>();
         if (this.apiKeys120dollars.length() > 0) {
@@ -95,20 +84,10 @@ public class ApiKeysService implements InitializingBean {
     }
 
     public Pair<ApiKey, String> getKey() {
-        var key = getKey5dollars();
-        if (key != null) return Pair.of(key, "5");
-
         return Pair.of(getKey120dollars(), "120");
     }
 
     private void scheduleReset() {
-        Timer timer5 = new Timer();
-        timer5.schedule(new TimerTask() {
-            public void run() {
-                refreshApiKeysMap5Dollars();
-            }
-        }, 0, 20 * 1000);
-
         Timer timer120 = new Timer();
         timer120.schedule(new TimerTask() {
             public void run() {

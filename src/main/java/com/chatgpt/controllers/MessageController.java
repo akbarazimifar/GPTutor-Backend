@@ -2,12 +2,11 @@ package com.chatgpt.controllers;
 
 import com.chatgpt.entity.CreateMessageRequest;
 import com.chatgpt.entity.Message;
+import com.chatgpt.services.HistoryService;
 import com.chatgpt.services.MessageService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +20,9 @@ import java.util.UUID;
 public class MessageController {
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    HistoryService historyService;
 
     @PostMapping(path = "/messages")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
@@ -36,25 +38,26 @@ public class MessageController {
 
     @GetMapping(path = "/messages/json/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Iterable<Message>> getMessagesJson(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
+    public ResponseEntity<String> getMessagesJson(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
+        var pair = messageService.getJSONExportData((String) request.getAttribute("vkUserId"), historyId);
+
         return ResponseEntity.ok()
-                .body(messageService.getMessagesByHistoryId((String) request.getAttribute("vkUserId"), historyId));
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pair.getSecond())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(pair.getFirst());
     }
+
     @GetMapping(path = "/messages/txt/{historyId}")
     @RateLimiter(name = "messagesLimit", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<String> getMessagesTxt(HttpServletRequest request, @PathVariable("historyId") UUID historyId) throws Exception {
-        var messages = messageService.getMessagesByHistoryId((String) request.getAttribute("vkUserId"), historyId).iterator();
-
-        StringBuilder text = new StringBuilder();
-
-        while (messages.hasNext()) {
-            var message = messages.next();
-            text.append(message.getRole()).append("\n\n").append(message.getContent()).append("\n\n");
-        }
+    public ResponseEntity<String> getMessagesTxt(HttpServletRequest request, @PathVariable("historyId") UUID historyId) {
+        var pair = messageService.getTXTExportData((String) request.getAttribute("vkUserId"), historyId);
 
         return ResponseEntity.ok()
-                .body(text.toString());
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pair.getSecond())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(pair.toString());
     }
+
 
     public ResponseEntity<Object> fallbackMethod(Exception e) throws Exception {
         if (e != null) throw e;

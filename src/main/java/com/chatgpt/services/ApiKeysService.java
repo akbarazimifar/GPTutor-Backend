@@ -12,7 +12,7 @@ import java.util.*;
 @Service
 public class ApiKeysService implements InitializingBean {
     final int ATTEMPTS_5_DOLLARS = 3;
-    final int ATTEMPTS_120_DOLLARS = 96;
+    final int ATTEMPTS_120_DOLLARS = 96 * 2;
 
     @Value("${api.keys.120dollars}")
     private String apiKeys120dollars;

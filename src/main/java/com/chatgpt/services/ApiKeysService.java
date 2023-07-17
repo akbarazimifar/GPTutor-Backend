@@ -17,6 +17,9 @@ public class ApiKeysService implements InitializingBean {
     @Value("${api.keys.120dollars}")
     private String apiKeys120dollars;
 
+    @Value("${api.keys.5dollars}")
+    private String apiKeys5dollars;
+
     private ArrayList<ApiKey> apiKeys5dollarsList = new ArrayList<>();
     private ArrayList<ApiKey> apiKeys120dollarsList = new ArrayList<>();
 
@@ -25,7 +28,7 @@ public class ApiKeysService implements InitializingBean {
             return this.apiKeys120dollarsList;
         }
 
-        return new ArrayList<>();
+        return this.apiKeys5dollarsList;
     }
 
 
@@ -36,12 +39,17 @@ public class ApiKeysService implements InitializingBean {
 
     void setupApiKeysMap() {
         final List<String> splitApiKeys120dollars = Arrays.asList(this.apiKeys120dollars.split(","));
+        final List<String> splitApiKeys5dollars = Arrays.asList(this.apiKeys5dollars.split(","));
 
-        final ArrayList<ApiKey> list5dollars = new ArrayList<>();
 
         final ArrayList<ApiKey> list120dollars = new ArrayList<>();
         if (this.apiKeys120dollars.length() > 0) {
             splitApiKeys120dollars.forEach((key) -> list120dollars.add(new ApiKey(key, ATTEMPTS_120_DOLLARS)));
+        }
+
+        final ArrayList<ApiKey> list5dollars = new ArrayList<>();
+        if (this.apiKeys5dollars.length() > 0) {
+            splitApiKeys5dollars.forEach((key) -> list5dollars.add(new ApiKey(key, ATTEMPTS_5_DOLLARS)));
         }
 
         this.apiKeys5dollarsList = list5dollars;
@@ -84,6 +92,11 @@ public class ApiKeysService implements InitializingBean {
     }
 
     public Pair<ApiKey, String> getKey() {
+        var apiKey = getKey5dollars();
+        if (apiKey != null) {
+            return  Pair.of(apiKey, "5");
+        }
+
         return Pair.of(getKey120dollars(), "120");
     }
 
@@ -94,5 +107,12 @@ public class ApiKeysService implements InitializingBean {
                 refreshApiKeysMap120Dollars();
             }
         }, 0, 60 * 1000);
+
+        Timer timer5 = new Timer();
+        timer5.schedule(new TimerTask() {
+            public void run() {
+                refreshApiKeysMap5Dollars();
+            }
+        }, 0, 20 * 1000);
     }
 }
